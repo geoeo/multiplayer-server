@@ -10,19 +10,20 @@ import play.api.mvc.RequestHeader
  */
 object GameMapper {
 
-  /** Facade for invalid requst */
+  /** Facade for invalid request */
   val invalidRequest = new RequestNotFound
 
   val STARTING_INDEX : Int = 1
 
   /**  Game Mapping Container; mutable reference to immutable map */
-  var gameMapping : Map[Int, (Option[RequestHeader],Option[RequestHeader])] = Map(1 -> (None,None))
+  var gameMapping : Map[Int, (Option[RequestHeader],Option[RequestHeader])]
+  = Map(1 -> (None,None))
 
   //TODO test insert
-  def insertRequestIntoGameMapping(newRequest : RequestHeader) =
-    gameMapping = updateCurrentGameMappingWithRequest(gameMapping,
-      getNextFreeIndex(gameMapping,STARTING_INDEX)
-      ,newRequest)
+  def insertRequestIntoGameMapping(newRequest : RequestHeader)
+  = gameMapping = updateCurrentGameMappingWithRequest(gameMapping,
+                                                      getNextFreeIndex(gameMapping,STARTING_INDEX),
+                                                      newRequest)
 
 
   //TODO test remove
@@ -32,17 +33,38 @@ object GameMapper {
     * Replaces the whole tuple i.e. its associated player as well(!)
     * If finishedRequst is not found function will write (-1 -> (None,None))
     */
-  def removeRequestFromGameMapping(finishedRequest : RequestHeader) =
-    gameMapping.updated(findRequestTupleKey(finishedRequest.id), (None,None))
+  def removeRequestFromGameMapping(finishedRequest : RequestHeader)
+  = gameMapping.updated(findRequestTupleKey(finishedRequest.id), (None,None))
+
+  /**
+   *
+   * @param request - a request
+   * @return the request opponent or invalidRequest object
+   */
+  def getOpponentOf(request : RequestHeader)
+  : RequestHeader
+  = if (getPlayerTupleOf(request)._1.id == request.id) getPlayerTupleOf(request)._1
+    else getPlayerTupleOf(request)._2
+
+  /**
+   *
+   * @param request - a request
+   * @return the player tuple or ( request , invalidRequest ) [or vice versa]
+   */
+  private def getPlayerTupleOf(request : RequestHeader)
+  : (RequestHeader , RequestHeader)
+  = ( gameMapping(findRequestTupleKey(request.id))._1.getOrElse(invalidRequest) ,
+      gameMapping(findRequestTupleKey(request.id))._2.getOrElse(invalidRequest) )
 
 
   /**
    *
-   * @param request - the requst to be checked
+   * @param request - the request to be checked
    * @return true if request is ready i.e. has a partner; false otherwise
    */
-  def isGameReadyWith(request : RequestHeader) : Boolean =
-      requestHasPartnerIn(gameMapping(findRequestTupleKey(request.id)))
+  def isGameReadyWith(request : RequestHeader)
+  : Boolean
+  = requestHasPartnerIn(gameMapping(findRequestTupleKey(request.id)))
 
 
   /** Util functions for gameMapping */
@@ -82,8 +104,8 @@ object GameMapper {
 
   /** Writes new request header into the current free index in the game mapping Map */
   private def updateCurrentGameMappingWithRequest(currentGameMapping : Map[Int, (Option[RequestHeader],Option[RequestHeader])] ,
-                                          currentFreeIndex : Int,
-                                          newRequest : RequestHeader)
+                                                  currentFreeIndex : Int,
+                                                  newRequest : RequestHeader)
   : Map[Int, (Option[RequestHeader],Option[RequestHeader])]
   = currentGameMapping
     .updated(
@@ -94,18 +116,20 @@ object GameMapper {
     )
 
   /** Given the id of a RequstHeader instance, find its mapping in gameMapping and return the key */
-  private def findRequestTupleKey(requestId : Long) : Int =
-    gameMapping.find(element => element._2._1.getOrElse(invalidRequest).id == requestId ||
+  private def findRequestTupleKey(requestId : Long)
+  : Int
+  = gameMapping.find(element => element._2._1.getOrElse(invalidRequest).id == requestId ||
                                 element._2._2.getOrElse(invalidRequest).id == requestId)
     .getOrElse((-1,(None,None)))._1
 
   private def requestHasPartnerIn(requests : (Option[RequestHeader],Option[RequestHeader]))
-  : Boolean = requests match {
+  : Boolean
+  = requests match {
 
     // if request has partner game can start
     case (Some(request),Some(otherRequest)) => true
     // else wait
-    case (_ , _)                           => false
+    case ( _ , _ )                          => false
 
   }
 

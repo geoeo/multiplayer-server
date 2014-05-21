@@ -14,7 +14,8 @@ object Application extends Controller {
       "x" -> Json.toJson(5),
       "y" -> Json.toJson(5),
       "angle" -> Json.toJson(50),
-      "isJumping" -> Json.toJson(false)
+      "isJumping" -> Json.toJson(true),
+      "shouldDie" -> Json.toJson(true)
     )
   )
 

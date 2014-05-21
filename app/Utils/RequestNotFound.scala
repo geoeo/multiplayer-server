@@ -14,6 +14,7 @@ class RequestNotFound extends RequestHeader {
   val id : Long = -1
 
   val uri : String = null
+
   val remoteAddress : String = null
 
   override def tags: Map[String, String] = null
