@@ -25,7 +25,6 @@ object GameMapper {
                                                       getNextFreeIndex(gameMapping,STARTING_INDEX),
                                                       newRequest)
 
-
   //TODO test remove
   /** Replaces key -> (r1,r2) with key -> (None,None)
     *
