@@ -1,23 +1,13 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
 import play.api.libs.iteratee.{Enumerator, Iteratee}
-import play.api.libs.json._
 import scala.concurrent.ExecutionContext.Implicits.global
 import Utils.GameMapper
 
 object Application extends Controller {
 
-  val testPos = Json.toJson(
-    Map(
-      "x" -> Json.toJson(5),
-      "y" -> Json.toJson(5),
-      "angle" -> Json.toJson(50),
-      "isJumping" -> Json.toJson(true),
-      "shouldDie" -> Json.toJson(true)
-    )
-  )
+  val testPos = model.testValuesForAPlayer.value
 
   /** Message Constants */
 
