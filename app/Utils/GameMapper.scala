@@ -10,7 +10,7 @@ import play.api.mvc.RequestHeader
  */
 object GameMapper {
 
-  /** Facade for invalid request */
+  /** Facade for invalid request i.e. not found in gameMapping */
   val invalidRequest = new RequestNotFound
 
   val STARTING_INDEX : Int = 1
@@ -19,13 +19,16 @@ object GameMapper {
   var gameMapping : Map[Int, (Option[RequestHeader],Option[RequestHeader])]
   = Map(1 -> (None,None))
 
-  //TODO test insert
+  /**
+   * Pre: It is assumed that the request does not already exist in gameMapping
+   * @param newRequest - new request to be placed into the gameMapping
+   *
+   */
   def insertRequestIntoGameMapping(newRequest : RequestHeader)
   = gameMapping = updateCurrentGameMappingWithRequest(gameMapping,
                                                       getNextFreeIndex(gameMapping,STARTING_INDEX),
                                                       newRequest)
 
-  //TODO test remove
   /** Replaces key -> (r1,r2) with key -> (None,None)
     *
     * @param finishedRequest - finished entity on client side
@@ -33,7 +36,7 @@ object GameMapper {
     * If finishedRequst is not found function will write (-1 -> (None,None))
     */
   def removeRequestFromGameMapping(finishedRequest : RequestHeader)
-  = gameMapping.updated(findRequestTupleKey(finishedRequest.id), (None,None))
+  = gameMapping = gameMapping.updated(findRequestTupleKey(finishedRequest.id), (None,None))
 
   /**
    *
@@ -42,8 +45,11 @@ object GameMapper {
    */
   def getOpponentOf(request : RequestHeader)
   : RequestHeader
-  = if (getPlayerTupleOf(request)._1.id == request.id) getPlayerTupleOf(request)._1
-    else getPlayerTupleOf(request)._2
+  =
+  {
+    val playerTuple = getPlayerTupleOf(request)
+    if (playerTuple._1.id == request.id) playerTuple._2 else playerTuple._1
+  }
 
   /**
    *
@@ -70,9 +76,9 @@ object GameMapper {
 
   /** Given the current game mapping and current Index and return the tuple  */
   private def getCurrentRequestTuple(currentGameMapping : Map[Int, (Option[RequestHeader],Option[RequestHeader])],
-                             currentFreeIndex : Int)
+                                     currentFreeIndex : Int)
   : (Option[RequestHeader],Option[RequestHeader])
-  = currentGameMapping(currentFreeIndex)
+  = currentGameMapping.getOrElse(currentFreeIndex,(None,None))
 
   /** Given a request and the most recent request tuple -> create a new request tuple */
   private def createRequestTuple(request : RequestHeader ,
@@ -93,12 +99,12 @@ object GameMapper {
   private def getNextFreeIndex(currentGameMapping : Map[Int, (Option[RequestHeader],Option[RequestHeader])],
                                currentIndex : Int)
   : Int
-  = currentGameMapping(currentIndex) match {
+  = currentGameMapping.getOrElse(currentIndex,(None,None)) match {
 
     // if full keep searching
-    case (Some(request1),Some(request2)) => getNextFreeIndex(currentGameMapping, currentIndex + 1)
+    case (Some(_),Some(_)) => getNextFreeIndex(currentGameMapping, currentIndex + 1)
     // if not full return current index
-    case (_ , _) => currentIndex
+    case (_,_) => currentIndex
   }
 
   /** Writes new request header into the current free index in the game mapping Map */
