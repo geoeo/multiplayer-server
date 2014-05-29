@@ -12,11 +12,16 @@ object testValuesForAPlayer {
 
   val value = Json.toJson(
     Map(
-      "x" -> Json.toJson(5),
-      "y" -> Json.toJson(5),
-      "angle" -> Json.toJson(50),
-      "isJumping" -> Json.toJson(true),
-      "shouldDie" -> Json.toJson(true)
+      "header" -> Json.toJson("player"),
+      "body" -> Json.toJson(
+        Map(
+          "x" -> Json.toJson(5),
+          "y" -> Json.toJson(5),
+          "angle" -> Json.toJson(50),
+          "isJumping" -> Json.toJson(true),
+          "shouldDie" -> Json.toJson(false)
+        )
+      )
     )
   )
 

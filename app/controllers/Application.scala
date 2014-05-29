@@ -7,6 +7,7 @@ import Utils.GameMapper
 
 object Application extends Controller {
 
+  val gameIsReady = model.gameIsReady.value
   val testPos = model.testValuesForAPlayer.value
 
   /** Message Constants */
@@ -15,6 +16,7 @@ object Application extends Controller {
   val initialResponse = "Player Joined: "
   val readyResponse = "Ready"
   val disconnectResponse = "Disconnected: "
+  val receivedResponse = "Received: "
 
   /** Defined: Utils.GameMapper.object */
   val gameMapper = GameMapper
@@ -27,7 +29,6 @@ object Application extends Controller {
 
   def index = Action ( Ok(views.html.index("Your new application is ready.")) )
 
-  //TODO test gameMapping
   def lobbySocket : WebSocket[String] = WebSocket.using[String]( request =>
     (
       Iteratee.foreach[String]( _ =>
@@ -44,18 +45,18 @@ object Application extends Controller {
         gameMapper.removeRequestFromGameMapping(request)
         println(disconnectResponse + request.id)
       }),
-      Enumerator(
-        waitResponse+ "\nGame Ready? : " + gameMapper.isGameReadyWith(request)
-        )
+      Enumerator(gameIsReady.toString)
+
     )
   )
 
-  def testSocket : WebSocket[String] = WebSocket.using[String] {request =>
+  //TODO implement lookup and marshalling of player data to opponent
+  def dataSocket : WebSocket[String] = WebSocket.using[String] {request =>
 
     val (in,out) =
       (
-        Iteratee.foreach[String](println).map(_ => println(disconnectResponse)),
-        Enumerator(testPos.toString())
+        Iteratee.foreach[String](data => println(receivedResponse + data)).map(_ => println(disconnectResponse)),
+        Enumerator(gameIsReady.toString)
       )
 
     (in,out)

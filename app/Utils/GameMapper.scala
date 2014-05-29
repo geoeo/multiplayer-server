@@ -22,7 +22,6 @@ object GameMapper {
   /**
    * Pre: It is assumed that the request does not already exist in gameMapping
    * @param newRequest - new request to be placed into the gameMapping
-   *
    */
   def insertRequestIntoGameMapping(newRequest : RequestHeader)
   = gameMapping = updateCurrentGameMappingWithRequest(gameMapping,
