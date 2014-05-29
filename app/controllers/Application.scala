@@ -12,12 +12,15 @@ object Application extends Controller {
   /** Message Constants */
 
   val waitResponse = "Waiting.."
-  val initialResponse = "Player Joined"
+  val initialResponse = "Player Joined: "
   val readyResponse = "Ready"
-  val disconnectResponse = "Disconnected"
+  val disconnectResponse = "Disconnected: "
 
   /** Defined: Utils.GameMapper.object */
   val gameMapper = GameMapper
+
+  /** Provides a simple lookup of request.id -> true/false */
+  var registry : Map[Long,Boolean] = Map()
 
 
   /** Routes */
@@ -29,14 +32,21 @@ object Application extends Controller {
     (
       Iteratee.foreach[String]( _ =>
       {
-        gameMapper.insertRequestIntoGameMapping(request)
-        println(initialResponse)
+        if(!registry.getOrElse(request.id,false)){
+          registry = registry.updated(request.id,true)
+          gameMapper.insertRequestIntoGameMapping(request)
+          println(initialResponse + request.id )
+        }
+
       }).map( _ =>
       {
+        registry = registry.updated(request.id,false)
         gameMapper.removeRequestFromGameMapping(request)
-        println(disconnectResponse)
+        println(disconnectResponse + request.id)
       }),
-      Enumerator(waitResponse+ "\nGame Ready? : " + gameMapper.isGameReadyWith(request))
+      Enumerator(
+        waitResponse+ "\nGame Ready? : " + gameMapper.isGameReadyWith(request)
+        )
     )
   )
 

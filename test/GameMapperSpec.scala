@@ -218,7 +218,34 @@ class GameMapperSpec extends Specification {
       GameMapper.getOpponentOf(testRequest) must not beNull;
       GameMapper.getOpponentOf(testRequest).id mustEqual -1
 
+    }
 
+
+    "Game is ready with no opponent" in new fakeApplication {
+
+      GameMapper.insertRequestIntoGameMapping(testRequest)
+
+      GameMapper.isGameReadyWith(testRequest) must beFalse
+
+    }
+
+    "Game is ready with an opponent" in new fakeApplication {
+
+      GameMapper.insertRequestIntoGameMapping(testRequest)
+      GameMapper.insertRequestIntoGameMapping(testRequest2)
+      GameMapper.insertRequestIntoGameMapping(testRequest3)
+
+      GameMapper.isGameReadyWith(testRequest) must beTrue
+      GameMapper.isGameReadyWith(testRequest2) must beTrue
+      GameMapper.isGameReadyWith(testRequest3) must beFalse
+
+    }
+
+    "Game is ready with an invalid request" in new fakeApplication {
+
+      GameMapper.isGameReadyWith(testRequest) must beFalse
+      GameMapper.isGameReadyWith(testRequest2) must beFalse
+      GameMapper.isGameReadyWith(testRequest3) must beFalse
 
     }
 

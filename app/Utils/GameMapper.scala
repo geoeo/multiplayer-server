@@ -53,23 +53,22 @@ object GameMapper {
 
   /**
    *
+   * @param request - the request to be checked
+   * @return true if request is ready i.e. has a partner; false otherwise
+   */
+  def isGameReadyWith(request : RequestHeader)
+  : Boolean
+  = requestHasPartnerIn(gameMapping.getOrElse(findRequestTupleKey(request.id),(None,None)))
+
+  /**
+   *
    * @param request - a request
    * @return the player tuple or ( request , invalidRequest ) [or vice versa]
    */
   private def getPlayerTupleOf(request : RequestHeader)
   : (RequestHeader , RequestHeader)
   = ( gameMapping(findRequestTupleKey(request.id))._1.getOrElse(invalidRequest) ,
-      gameMapping(findRequestTupleKey(request.id))._2.getOrElse(invalidRequest) )
-
-
-  /**
-   *
-   * @param request - the request to be checked
-   * @return true if request is ready i.e. has a partner; false otherwise
-   */
-  def isGameReadyWith(request : RequestHeader)
-  : Boolean
-  = requestHasPartnerIn(gameMapping(findRequestTupleKey(request.id)))
+    gameMapping(findRequestTupleKey(request.id))._2.getOrElse(invalidRequest) )
 
 
   /** Util functions for gameMapping */
