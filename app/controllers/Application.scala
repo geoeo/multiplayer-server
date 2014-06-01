@@ -3,11 +3,13 @@ package controllers
 import play.api.mvc._
 import play.api.libs.iteratee.{Enumerator, Iteratee}
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.json.{JsValue, Json}
 import Utils.GameMapper
+import Utils.StateMapper
 
 object Application extends Controller {
 
-  val gameIsReady = model.gameIsReady.value
+  val gameIsReady : JsValue = model.gameIsReady.value
   val testPos = model.testValuesForAPlayer.value
 
   /** Message Constants */
@@ -45,7 +47,7 @@ object Application extends Controller {
         gameMapper.removeRequestFromGameMapping(request)
         println(disconnectResponse + request.id)
       }),
-      Enumerator(gameIsReady.toString)
+      Enumerator(gameIsReady.toString())
 
     )
   )
@@ -55,8 +57,17 @@ object Application extends Controller {
 
     val (in,out) =
       (
-        Iteratee.foreach[String](data => println(receivedResponse + data)).map(_ => println(disconnectResponse)),
-        Enumerator(gameIsReady.toString)
+        Iteratee.foreach[String]{ data =>
+          println(receivedResponse + data)
+          StateMapper.updateState(request.id.toInt,Json.toJson(data))
+        }.map(_ => println(disconnectResponse)),
+        Enumerator{
+          //TODO fix this bug
+//          val opponent : RequestHeader = GameMapper.getOpponentOf(request)
+
+          /** Lookup opponent state data and send back */
+          StateMapper.lookUp(-1).toString()
+        }
       )
 
     (in,out)

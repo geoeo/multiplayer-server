@@ -18,7 +18,7 @@ object testValuesForAPlayer {
           "x" -> Json.toJson(5),
           "y" -> Json.toJson(5),
           "angle" -> Json.toJson(50),
-          "isJumping" -> Json.toJson(true),
+          "isJumping" -> Json.toJson(false),
           "shouldDie" -> Json.toJson(false)
         )
       )

@@ -220,6 +220,12 @@ class GameMapperSpec extends Specification {
 
     }
 
+    "Getting Opponnent of invalid Request" in new fakeApplication{
+
+      GameMapper.getOpponentOf(testRequest) must not beNull;
+      GameMapper.getOpponentOf(testRequest).id mustEqual -1;
+    }
+
 
     "Game is ready with no opponent" in new fakeApplication {
 
