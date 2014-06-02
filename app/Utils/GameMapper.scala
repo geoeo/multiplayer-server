@@ -66,8 +66,10 @@ object GameMapper {
    */
   private def getPlayerTupleOf(request : RequestHeader)
   : (RequestHeader , RequestHeader)
-  = ( gameMapping(findRequestTupleKey(request.id))._1.getOrElse(invalidRequest) ,
-    gameMapping(findRequestTupleKey(request.id))._2.getOrElse(invalidRequest) )
+  = (
+      gameMapping.getOrElse(findRequestTupleKey(request.id),(Some(invalidRequest),Some(invalidRequest)))._1.getOrElse(invalidRequest),
+      gameMapping.getOrElse(findRequestTupleKey(request.id),(Some(invalidRequest),Some(invalidRequest)))._2.getOrElse(invalidRequest)
+    )
 
 
   /** Util functions for gameMapping */
@@ -118,7 +120,9 @@ object GameMapper {
         getCurrentRequestTuple(currentGameMapping,currentFreeIndex))
     )
 
-  /** Given the id of a RequstHeader instance, find its mapping in gameMapping and return the key */
+  /** Given the id of a RequstHeader instance, find its mapping in gameMapping and return the key
+    * If the requst Id is not found, it will return -1
+    * */
   private def findRequestTupleKey(requestId : Long)
   : Int
   = gameMapping.find(element => element._2._1.getOrElse(invalidRequest).id == requestId ||
