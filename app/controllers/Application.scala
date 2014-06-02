@@ -60,8 +60,8 @@ object Application extends Controller {
               Logger.info(initialResponse + request.id )
           }
 
-          if(gameMapper.isGameReadyWith(request))
-            channel.push(model.GameIsReady.generateValue.toString())
+          if(gameMapper.isGameReadyWith(request)){
+            channel.push(model.GameIsReady.generateValue(request.id).toString())}
           else
             channel.push(gameIsNotReady.toString())
 
@@ -78,6 +78,8 @@ object Application extends Controller {
     }
   )
 
+
+  // TODO check data arrives at destination
   def dataSocket : WebSocket[String] = WebSocket.using[String] {request =>
 
     val (out,channel) = Concurrent.broadcast[String]
