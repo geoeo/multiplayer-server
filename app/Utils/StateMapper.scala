@@ -10,11 +10,11 @@ import play.api.libs.json.JsValue
  */
 object StateMapper {
 
-  //TODO evaluate possible raceconditions in StateMapper
+  //TODO evaluate possible race conditions in StateMapper
 
   var requestStateMap : Map[Int,Option[JsValue]] = Map (1 -> None)
 
-  def updateState(index : Int , data : JsValue) = requestStateMap = requestStateMap.updated(1,Some(data))
+  def updateState(index : Int , data : JsValue) = requestStateMap = requestStateMap.updated(index,Some(data))
 
   def lookUp(index : Int) : JsValue = requestStateMap.getOrElse(index,None) match {
     case Some(data) => data

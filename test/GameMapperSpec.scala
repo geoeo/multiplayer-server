@@ -204,8 +204,8 @@ class GameMapperSpec extends Specification {
       GameMapper.insertRequestIntoGameMapping(testRequest)
       GameMapper.insertRequestIntoGameMapping(testRequest2)
 
-      GameMapper.getOpponentOf(testRequest) must not beNull;
-      GameMapper.getOpponentOf(testRequest).id mustEqual 2
+      GameMapper.getOpponentOf(1) must not beNull;
+      GameMapper.getOpponentOf(1).id mustEqual 2
 
 
 
@@ -215,8 +215,8 @@ class GameMapperSpec extends Specification {
 
       GameMapper.insertRequestIntoGameMapping(testRequest)
 
-      GameMapper.getOpponentOf(testRequest) must not beNull;
-      GameMapper.getOpponentOf(testRequest).id mustEqual -1
+      GameMapper.getOpponentOf(1) must not beNull;
+      GameMapper.getOpponentOf(1).id mustEqual -1
 
 
 
@@ -224,9 +224,9 @@ class GameMapperSpec extends Specification {
 
     "Getting Opponent of invalid request" in new fakeApplication{
 
-      GameMapper.getOpponentOf(testRequest) must not beNull;
-      GameMapper.getOpponentOf(testRequest).id mustEqual -1
-      GameMapper.getOpponentOf(testRequest) mustEqual GameMapper.invalidRequest
+      GameMapper.getOpponentOf(1) must not beNull;
+      GameMapper.getOpponentOf(1).id mustEqual -1
+      GameMapper.getOpponentOf(1) mustEqual GameMapper.invalidRequest
       GameMapper.gameMapping must have size 1
     }
 

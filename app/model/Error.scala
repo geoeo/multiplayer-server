@@ -10,7 +10,7 @@ import play.api.libs.json.Json
  */
 object Error {
 
-  val value = Json.toJson(Map( "header" -> Json.toJson("error")))
+  val value = Json.toJson(Map( "header" -> Json.toJson("error"),"body" -> Json.toJson("no data")))
 
 
 }

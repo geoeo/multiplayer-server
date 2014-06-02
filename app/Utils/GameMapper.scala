@@ -39,15 +39,15 @@ object GameMapper {
 
   /**
    *
-   * @param request - a request
+   * @param id - a request id
    * @return the request opponent or invalidRequest object
    */
-  def getOpponentOf(request : RequestHeader)
+  def getOpponentOf(id : Int)
   : RequestHeader
   =
   {
-    val playerTuple = getPlayerTupleOf(request)
-    if (playerTuple._1.id == request.id) playerTuple._2 else playerTuple._1
+    val playerTuple = getPlayerTupleOf(id)
+    if (playerTuple._1.id == id) playerTuple._2 else playerTuple._1
   }
 
   /**
@@ -61,14 +61,14 @@ object GameMapper {
 
   /**
    *
-   * @param request - a request
+   * @param id - a request id
    * @return the player tuple or ( request , invalidRequest ) [or vice versa]
    */
-  private def getPlayerTupleOf(request : RequestHeader)
+  private def getPlayerTupleOf(id : Int)
   : (RequestHeader , RequestHeader)
   = (
-      gameMapping.getOrElse(findRequestTupleKey(request.id),(Some(invalidRequest),Some(invalidRequest)))._1.getOrElse(invalidRequest),
-      gameMapping.getOrElse(findRequestTupleKey(request.id),(Some(invalidRequest),Some(invalidRequest)))._2.getOrElse(invalidRequest)
+      gameMapping.getOrElse(findRequestTupleKey(id),(Some(invalidRequest),Some(invalidRequest)))._1.getOrElse(invalidRequest),
+      gameMapping.getOrElse(findRequestTupleKey(id),(Some(invalidRequest),Some(invalidRequest)))._2.getOrElse(invalidRequest)
     )
 
 
