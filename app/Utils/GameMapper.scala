@@ -59,6 +59,10 @@ object GameMapper {
   : Boolean
   = requestHasPartnerIn(gameMapping.getOrElse(findRequestTupleKey(request.id),(None,None)))
 
+  def isPlayerOne(request : RequestHeader)
+  : Boolean
+  = getPlayerTupleOf(request.id.toInt)._1.id == request.id
+
   /**
    *
    * @param id - a request id

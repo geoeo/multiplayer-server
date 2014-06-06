@@ -5,8 +5,7 @@ version := "1.0-SNAPSHOT"
 libraryDependencies ++= Seq(
   jdbc,
   anorm,
-  cache,
-  "io.backchat.hookup" % "hookup_2.10" % "0.2.3"
+  cache
 )     
 
 play.Project.playScalaSettings

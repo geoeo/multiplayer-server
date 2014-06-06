@@ -34,11 +34,13 @@ object Application extends Controller {
 
   /** add a new field in the session cookie
     * so that the client can be tracked across multiple requests
+    *
+    * UNUSED IN CURRENT VERSION
     * */
 
   def setUpSession = Action (implicit request => Ok("Set up").withSession(request.session + ("id" , request.id.toString) ))
 
-  //TODO request id changes on socket change! fix persistence error
+  //TODO import client side codebase to play so that session cookies can be used to transfer player id
 
   def lobbySocket : WebSocket[String] = WebSocket.using[String]( request =>
     {
@@ -61,7 +63,12 @@ object Application extends Controller {
           }
 
           if(gameMapper.isGameReadyWith(request)){
-            channel.push(model.GameIsReady.generateValue(request.id).toString())}
+            if(gameMapper.isPlayerOne(request))
+              channel.push(model.GameIsReadyAsPlayerOne.generateValue(request.id).toString())
+            else
+              channel.push(model.GameIsReadyAsPlayerTwo.generateValue(request.id).toString())
+          }
+
           else
             channel.push(gameIsNotReady.toString())
 
@@ -98,10 +105,10 @@ object Application extends Controller {
       StateMapper.updateState(game_id,parsedData)
 
       val opponent : RequestHeader = GameMapper.getOpponentOf(game_id)
-      /** Lookup opponent state data and send back */
+      /** Lookup opponent state data and send back to request */
       channel.push(Json.stringify(StateMapper.lookUp(opponent.id.toInt)))
 
-      }.map(_ => println(disconnectResponse)),
+      }.map(_ => Logger.info(disconnectResponse)),
       out
     )
 
